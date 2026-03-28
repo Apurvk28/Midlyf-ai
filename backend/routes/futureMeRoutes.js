@@ -1,9 +1,10 @@
 const express = require("express");
-const { handleFutureMeChat } = require("../controllers/futureMeController");
+const { handleFutureMeChat, getChatHistory } = require("../controllers/futureMeController");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// POST /api/future-me
-router.post("/", handleFutureMeChat);
+router.post("/", protect, handleFutureMeChat);
+router.get("/history", protect, getChatHistory);
 
 module.exports = router;
