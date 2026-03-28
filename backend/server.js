@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const config = require("./config");
+const futureMeRoutes = require("./routes/futureMeRoutes");
 
 const app = express();
 
@@ -14,23 +16,8 @@ app.get("/api/test", (req, res) => {
   res.json({ message: "API working 🔥" });
 });
 
-app.listen(5001, () => {
-  console.log("Server running on port 5001");
-});
+app.use("/api/future-me", futureMeRoutes);
 
-app.post("/api/future-me", (req, res) => {
-  const { message } = req.body;
-
-  // Simple logic (AI later)
-  let reply = "";
-
-  if (message.toLowerCase().includes("career")) {
-    reply = "Focus on skills, consistency and networking 🚀";
-  } else if (message.toLowerCase().includes("love")) {
-    reply = "Emotions control karo, growth pe focus karo 💔➡️💪";
-  } else {
-    reply = "Discipline > Motivation. Start working now 🔥";
-  }
-
-  res.json({ reply });
+app.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`);
 });
