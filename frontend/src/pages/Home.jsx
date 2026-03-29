@@ -1,20 +1,52 @@
-import ChatUI from "../components/ChatUI";
+import { useEffect, useState } from "react";
+import ChatWindow from "../components/ChatWindow";
 
 const Home = () => {
-  return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
-      <div className="text-center mb-8">
-        <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-          MIDLYF.ai 🚀
-        </h1>
-        <p className="text-gray-400 text-lg">
-          Connect with your future self to navigate your life's path.
-        </p>
-      </div>
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-      <ChatUI />
-    </div>
-  );
+  const fetchChats = async () => {
+    try {
+      const res = await fetch("http://localhost:5001/api/chats");
+      if (!res.ok) return;
+      const data = await res.json();
+      const formatted = data.flatMap((chat) => [
+        { role: "user", text: chat.message },
+        { role: "ai", text: chat.reply },
+      ]);
+      setMessages(formatted.reverse());
+    } catch (err) {
+      console.warn("No chat history available from API yet.", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchChats();
+  }, []);
+
+  const handleSendMessage = async (input) => {
+    if (!input.trim()) return;
+
+    const userMsg = { role: "user", text: input };
+    setMessages((prev) => [...prev, userMsg]);
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:5001/api/future-me", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
+      const data = await res.json();
+      setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
+    } catch (error) {
+      setMessages((prev) => [...prev, { role: "ai", text: "Signal lost... Reality glitching. Try again." }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return <ChatWindow messages={messages} loading={loading} onSendMessage={handleSendMessage} />;
 };
 
 export default Home;

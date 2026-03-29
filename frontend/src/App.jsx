@@ -1,88 +1,41 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+// Layout
+import Layout from "./components/Layout";
+
+// Pages
+import Landing from "./pages/Landing";
+import Home from "./pages/Home";
+import Toxic from "./pages/Toxic";
+import LifePredict from "./pages/LifePredict";
+import Scenario from "./pages/Scenario";
+import Reality from "./pages/Reality";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 function App() {
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
-
-  // Fetch chat history
-  const fetchChats = async () => {
-    const res = await fetch("http://localhost:5001/api/chats");
-    const data = await res.json();
-
-    // Convert DB format to chat format
-    const formatted = data.flatMap((chat) => [
-      { role: "user", text: chat.message },
-      { role: "ai", text: chat.reply },
-    ]);
-
-    setMessages(formatted.reverse());
-  };
-
-  useEffect(() => {
-    fetchChats();
-  }, []);
-
-  const sendMessage = async () => {
-    if (!input) return;
-
-    const userMsg = { role: "user", text: input };
-    setMessages((prev) => [...prev, userMsg]);
-
-    const res = await fetch("http://localhost:5001/api/future-me", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: input }),
-    });
-
-    const data = await res.json();
-
-    const aiMsg = { role: "ai", text: data.reply };
-    setMessages((prev) => [...prev, aiMsg]);
-
-    setInput("");
-  };
-
   return (
-    <div className="h-screen bg-black text-white flex flex-col">
-      <h1 className="text-center text-3xl font-bold p-4">
-        MIDLYF.ai 🚀
-      </h1>
+    <Router>
+      <Routes>
 
-      {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`max-w-xs p-3 rounded ${
-              msg.role === "user"
-                ? "bg-green-500 ml-auto text-black"
-                : "bg-gray-800 mr-auto"
-            }`}
-          >
-            {msg.text}
-          </div>
-        ))}
-      </div>
+        {/* LANDING PAGE */}
+        <Route path="/" element={<Landing />} />
 
-      {/* Input */}
-      <div className="p-4 flex gap-2">
-        <input
-          className="flex-1 p-2 rounded text-black"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask your future self..."
-        />
+        {/* AUTH PAGES */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
-        <button
-          onClick={sendMessage}
-          className="bg-green-500 px-4 rounded"
-        >
-          Send
-        </button>
-      </div>
-    </div>
+        {/* APP (DASHBOARD WITH LAYOUT) */}
+        <Route path="/app" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="toxic" element={<Toxic />} />
+          <Route path="life" element={<LifePredict />} />
+          <Route path="scenario" element={<Scenario />} />
+          <Route path="reality" element={<Reality />} />
+        </Route>
+
+      </Routes>
+    </Router>
   );
 }
 

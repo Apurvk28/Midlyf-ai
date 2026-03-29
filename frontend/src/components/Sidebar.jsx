@@ -1,57 +1,45 @@
-import { useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import { MessageSquare, ShieldAlert, TrendingUp, Infinity, Activity, LogOut } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { MessageSquare, ShieldAlert, TrendingUp, Infinity, Activity } from "lucide-react";
 
 const Sidebar = () => {
-  const { user, logout } = useContext(AuthContext);
-  const location = useLocation();
-
   const links = [
-    { name: "Future Me Chat", path: "/", icon: MessageSquare },
-    { name: "Toxic Detector", path: "/toxic", icon: ShieldAlert },
-    { name: "Life Predictor", path: "/life", icon: TrendingUp },
-    { name: "Scenario Gen", path: "/scenario", icon: Infinity },
-    { name: "Reality Check", path: "/reality", icon: Activity },
+    { name: "Future Me", icon: MessageSquare, path: "/" },
+    { name: "Toxic Check", icon: ShieldAlert, path: "/toxic" },
+    { name: "Life Predict", icon: TrendingUp, path: "/life" },
+    { name: "Scenarios", icon: Infinity, path: "/scenario" },
+    { name: "Reality check", icon: Activity, path: "/reality" },
   ];
 
   return (
-    <div className="w-64 h-screen bg-gray-900 border-r border-gray-800 text-white flex flex-col hidden md:flex">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-          MIDLYF.ai
-        </h1>
-      </div>
-      
-      <nav className="flex-1 px-4 space-y-2 mt-4">
+    <aside className="w-20 md:w-64 h-full bg-white border-r border-slate-200 flex flex-col transition-all duration-300 z-20 shrink-0 shadow-sm pt-4 md:pt-0">
+      <nav className="flex-1 w-full flex flex-col gap-2 p-3 md:p-4 mt-2 overflow-y-auto">
         {links.map((link) => {
           const Icon = link.icon;
-          const isActive = location.pathname === link.path;
           return (
-            <Link
+            <NavLink
               key={link.name}
               to={link.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive ? "bg-gray-800 text-green-400" : "text-gray-400 hover:bg-gray-800 hover:text-white"
+              className={({ isActive }) => `w-full flex items-center justify-center md:justify-start gap-4 px-4 py-3 border border-transparent rounded-xl transition-all duration-200 ${
+                isActive
+                  ? "bg-blue-50 text-blue-700 font-semibold border-blue-100 shadow-sm"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-medium"
               }`}
             >
-              <Icon size={20} />
-              <span className="font-medium">{link.name}</span>
-            </Link>
+              <Icon size={20} className="shrink-0" />
+              <span className="hidden md:block">{link.name}</span>
+            </NavLink>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-gray-800">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-400 truncate pr-2">{user?.name}</span>
-          <button onClick={logout} className="text-red-400 hover:text-red-500 p-2 border border-red-500/20 rounded-md bg-red-500/10">
-            <LogOut size={18} />
-          </button>
+      <div className="p-6 w-full hidden md:flex items-center gap-3 border-t border-slate-100">
+        <div className="relative flex h-2.5 w-2.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
         </div>
+        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">System Ready</span>
       </div>
-    </div>
+    </aside>
   );
 };
-
 export default Sidebar;

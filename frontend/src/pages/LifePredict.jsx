@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getLifePrediction } from "../services/api";
+import { TrendingUp } from "lucide-react";
 
 const LifePredict = () => {
   const [sleep, setSleep] = useState("");
@@ -12,7 +12,12 @@ const LifePredict = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const data = await getLifePrediction({ sleep, workHours, skills });
+      const res = await fetch("http://localhost:5001/api/features/life", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sleep, workHours, skills }),
+      });
+      const data = await res.json();
       setResult(data);
     } catch (err) {
       console.error(err);
@@ -22,49 +27,76 @@ const LifePredict = () => {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-2">Life Predictor 🔮</h1>
-      <p className="text-gray-400 mb-8 text-center max-w-2xl">Enter your daily habits and skills to see your brutal trajectory.</p>
+    <div className="w-full h-full overflow-y-auto px-6 py-12 flex justify-center scrollbar-hide">
+      <div className="w-full max-w-3xl flex flex-col items-center">
+        
+        <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium rounded-full border border-white/20 bg-white/5 text-gray-300 mb-8 backdrop-blur-md">
+          <TrendingUp className="w-3 h-3 text-emerald-400" />
+          <span>Timeline Analytics</span>
+        </div>
 
-      <form onSubmit={handlePredict} className="w-full max-w-md bg-gray-900 border border-gray-800 p-6 rounded-xl shadow-2xl space-y-4 mb-8">
-        <div>
-          <label className="block text-gray-400 mb-1 text-sm font-bold">Average Sleep (Hours)</label>
-          <input type="number" required max="24" className="w-full bg-gray-800 text-white px-4 py-3 rounded outline-none focus:ring-2 focus:ring-green-400" value={sleep} onChange={(e) => setSleep(e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-gray-400 mb-1 text-sm font-bold">Daily Work/Study (Hours)</label>
-          <input type="number" required max="24" className="w-full bg-gray-800 text-white px-4 py-3 rounded outline-none focus:ring-2 focus:ring-green-400" value={workHours} onChange={(e) => setWorkHours(e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-gray-400 mb-1 text-sm font-bold">Key Skills (comma separated)</label>
-          <input type="text" required placeholder="Python, Sales, Networking" className="w-full bg-gray-800 text-white px-4 py-3 rounded outline-none focus:ring-2 focus:ring-green-400" value={skills} onChange={(e) => setSkills(e.target.value)} />
-        </div>
-        <button type="submit" disabled={loading} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-lg transition-colors shadow-lg mt-4 disabled:opacity-50">
-          {loading ? "Calculating Destiny..." : "Predict My Future"}
-        </button>
-      </form>
+        <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 text-center leading-tight">
+          Calculate Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-600">Trajectory</span>.
+        </h2>
+        <p className="text-gray-400 text-lg text-center max-w-xl mb-12">
+          Enter your daily habits and skills to mathematically project your trajectory and success probability.
+        </p>
 
-      {result && (
-        <div className="w-full max-w-2xl bg-gray-900 border border-gray-800 p-8 rounded-xl shadow-2xl animate-fade-in text-center">
-          <h2 className="text-xl text-gray-400 mb-4 uppercase tracking-wider font-bold border-b border-gray-800 pb-2">Prediction Results</h2>
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="bg-gray-800 p-4 rounded-xl">
-              <div className="text-sm text-gray-400 mb-1">Projected Peak Income</div>
-              <div className="text-3xl font-black text-green-400">{result.predictedIncome}</div>
+        <div className="w-full bg-[#111111]/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 shadow-2xl">
+          <form onSubmit={handlePredict} className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <div className="space-y-3">
+                 <label className="text-sm font-semibold text-gray-400">Sleep (Hours)</label>
+                 <input type="number" required max="24" className="w-full bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-white text-lg outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all placeholder-gray-600" value={sleep} onChange={(e) => setSleep(e.target.value)} />
+               </div>
+               <div className="space-y-3">
+                 <label className="text-sm font-semibold text-gray-400">Work/Study (Hours)</label>
+                 <input type="number" required max="24" className="w-full bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-white text-lg outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all placeholder-gray-600" value={workHours} onChange={(e) => setWorkHours(e.target.value)} />
+               </div>
             </div>
-            <div className="bg-gray-800 p-4 rounded-xl">
-              <div className="text-sm text-gray-400 mb-1">Success Probability</div>
-              <div className={`text-3xl font-black ${result.successProbability > 50 ? 'text-blue-400' : 'text-red-400'}`}>{result.successProbability}%</div>
+            
+            <div className="space-y-3">
+               <label className="text-sm font-semibold text-gray-400">Key Skills (Comma Separated)</label>
+               <input type="text" required placeholder="Python, Sales, Networking" className="w-full bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-white text-lg outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all placeholder-gray-600" value={skills} onChange={(e) => setSkills(e.target.value)} />
             </div>
-          </div>
-          <div className="bg-gray-800 p-6 rounded-xl border-l-4 border-yellow-500 text-left">
-            <h3 className="font-bold mb-2">AI Feedback:</h3>
-            <p className="text-gray-300 leading-relaxed">{result.feedback}</p>
-          </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-white text-black hover:bg-gray-200 px-8 py-5 rounded-full font-semibold transition-all disabled:opacity-50 text-lg shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95"
+            >
+              {loading ? "Calculating Trajectory..." : "Predict Future Timeline"}
+            </button>
+          </form>
         </div>
-      )}
+
+        {result && (
+          <div className="w-full mt-10 bg-[#111111]/90 backdrop-blur-3xl border border-white/10 p-10 rounded-[2rem] shadow-2xl animate-fade-in divide-y divide-white/5">
+             <div className="pb-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+               <div>
+                  <h3 className="text-gray-400 font-bold uppercase tracking-widest text-xs mb-4">Projected Peak Income</h3>
+                  <div className="text-4xl md:text-5xl tracking-tighter font-bold text-white">
+                    {result.predictedIncome}
+                  </div>
+               </div>
+               <div>
+                  <h3 className="text-gray-400 font-bold uppercase tracking-widest text-xs mb-4">Success Probability</h3>
+                  <div className={`text-4xl md:text-5xl tracking-tighter font-bold ${result.successProbability > 50 ? 'text-blue-400' : 'text-red-500'}`}>
+                    {result.successProbability}%
+                  </div>
+               </div>
+             </div>
+             
+             <div className="pt-8">
+               <h3 className="text-emerald-400 font-bold uppercase tracking-widest text-xs mb-4 flex items-center gap-2">
+                 <TrendingUp className="w-4 h-4" /> AI Trajectory Analysis
+               </h3>
+               <p className="text-gray-200 leading-relaxed text-lg">{result.feedback}</p>
+             </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
-
 export default LifePredict;
