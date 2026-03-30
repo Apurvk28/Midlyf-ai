@@ -81,10 +81,30 @@ const getRealityCheck = async (data) => {
   }
 };
 
+const getDreamAnalysis = async (dreamText) => {
+  const systemPrompt = "Analyze this dream. Reveal its hidden psychological meaning, future implications, and real-life connections. Be mystical but insightful. Reply in 3-4 sentences max.";
+  try {
+    return await getHuggingFaceResponse(dreamText, systemPrompt);
+  } catch (err) {
+    return "The stars are clouded. Your dream suggests a need for introspection, but the future remains yours to write.";
+  }
+};
+
+const getCareerPrediction = async (data) => {
+  const systemPrompt = `Act as a strategic career advisor. Based on the user's skills and interests, predict a realistic or futuristic career trajectory. Give them brutal but motivating advice on what to focus on.`;
+  try {
+    return await getHuggingFaceResponse(JSON.stringify(data), systemPrompt);
+  } catch (err) {
+    return "Focus on adaptability and continuous learning. The future belongs to those who outwork the rest.";
+  }
+};
+
 module.exports = {
   getFutureMeReply,
   getToxicPercentage,
   getLifePrediction,
   getScenario,
-  getRealityCheck
+  getRealityCheck,
+  getDreamAnalysis,
+  getCareerPrediction
 };

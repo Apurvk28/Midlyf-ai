@@ -10,6 +10,8 @@ import Toxic from "./pages/Toxic";
 import LifePredict from "./pages/LifePredict";
 import Scenario from "./pages/Scenario";
 import Reality from "./pages/Reality";
+import Dream from "./pages/Dream";
+import Career from "./pages/Career";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
@@ -32,6 +34,8 @@ function App() {
           <Route path="life" element={<LifePredict />} />
           <Route path="scenario" element={<Scenario />} />
           <Route path="reality" element={<Reality />} />
+          <Route path="dream" element={<Dream />} />
+          <Route path="career" element={<Career />} />
         </Route>
 
       </Routes>

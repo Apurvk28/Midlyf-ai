@@ -50,4 +50,28 @@ router.post("/reality", protect, async (req, res) => {
   }
 });
 
+// Dream Analyzer
+router.post("/dream", protect, async (req, res) => {
+  try {
+    const { dream } = req.body;
+    const result = await aiService.getDreamAnalysis(dream);
+    await Prediction.create({ user: req.user._id, type: "dream", inputData: { dream }, result });
+    res.json({ result });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to analyze dream" });
+  }
+});
+
+// Career Path AI
+router.post("/career", protect, async (req, res) => {
+  try {
+    const data = req.body;
+    const result = await aiService.getCareerPrediction(data);
+    await Prediction.create({ user: req.user._id, type: "career", inputData: data, result });
+    res.json({ result });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to predict career path" });
+  }
+});
+
 module.exports = router;

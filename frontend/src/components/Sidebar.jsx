@@ -1,13 +1,15 @@
 import { NavLink } from "react-router-dom";
-import { MessageSquare, ShieldAlert, TrendingUp, Infinity, Activity } from "lucide-react";
+import { MessageSquare, ShieldAlert, TrendingUp, Infinity, Activity, Moon, Briefcase } from "lucide-react";
 
 const Sidebar = () => {
   const links = [
-    { name: "Future Me", icon: MessageSquare, path: "/" },
-    { name: "Toxic Check", icon: ShieldAlert, path: "/toxic" },
-    { name: "Life Predict", icon: TrendingUp, path: "/life" },
-    { name: "Scenarios", icon: Infinity, path: "/scenario" },
-    { name: "Reality check", icon: Activity, path: "/reality" },
+    { name: "Future Me", icon: MessageSquare, path: "/app" },
+    { name: "Toxic Check", icon: ShieldAlert, path: "/app/toxic" },
+    { name: "Life Predict", icon: TrendingUp, path: "/app/life" },
+    { name: "Scenarios", icon: Infinity, path: "/app/scenario" },
+    { name: "Reality check", icon: Activity, path: "/app/reality" },
+    { name: "Dream Analyzer", icon: Moon, path: "/app/dream" },
+    { name: "Career Path", icon: Briefcase, path: "/app/career" },
   ];
 
   return (
